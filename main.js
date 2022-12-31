@@ -1,3 +1,4 @@
+import { Controller } from "./controller.js";
 
 // const FRAMES = 30
 const VIDEO_WIDTH = 500;
@@ -46,9 +47,11 @@ function processCamera() {
     let shortDistance = null
     let bluePixel = null
 
-    let sumX = 0
-    let sumY = 0
-    let count = 0
+    // let sumX = 0
+    // let sumY = 0
+    // let count = 0
+
+    const controllers = [];
     
     for (let pixel = 0; pixel < pixels.length; pixel+=4) {
         const currenPixel = {
@@ -67,10 +70,31 @@ function processCamera() {
             const positionX = (pixel / 4) % $canvas.width; // without round because is square
             const positionY = Math.floor(pixel / 4 / $canvas.width);
 
-            sumX += positionX
-            sumY += positionY
+            // Group
+            if(!controllers.length) {
+                const controller = new Controller(positionX, positionY);
+                controllers.push(controller)
+            } else {
+                // validate if the new position is close to some controller
+                let isNewController = true;
+                for (let i = 0; i < controllers.length; i++) {
+                    if(controllers[i].isClose(positionX, positionY)){
+                        controllers[i].addPixel(positionX, positionY)
+                        isNewController = false
+                        break
+                    }
+                }
+                // new Controller
+                if(isNewController) {
+                    const newController = new Controller(positionX, positionY);
+                    controllers.push(newController)
+                }
+            }
 
-            count++
+            // sumX += positionX
+            // sumY += positionY
+
+            // count++
         }        
 
         // Shortist distance
@@ -89,14 +113,18 @@ function processCamera() {
 
     canvasContex.putImageData(imageData, 0, 0)
 
-    // print pixel more blue
-    if(count){            
-        printCicle({ 
-            ctx: canvasContex,
-            x: sumX / count,
-            y: sumY /count
-        })
+    for (let controller = 0; controller < controllers.length; controller++) {
+        controllers[controller].drawSquare(canvasContex);
     }
+
+    // print pixel more blue
+    // if(count){            
+    //     printCicle({ 
+    //         ctx: canvasContex,
+    //         x: sumX / count,
+    //         y: sumY /count
+    //     })
+    // }
 
 
     setTimeout(processCamera, 30)
