@@ -1,0 +1,17 @@
+* {
+    box-sizing: border-box;
+}
+html, body {
+    padding: 0px;
+    margin: 0px;
+}
+
+.video-container {
+    display: flex;
+    justify-content: center;
+    padding: 25px;    
+}
+
+#canvas {
+    transform: scaleX(-1);
+}
