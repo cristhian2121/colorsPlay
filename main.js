@@ -3,7 +3,7 @@
 const VIDEO_WIDTH = 500;
 const VIDEO_HEIGTH = 500;
 const BLUE = { r: 0, g: 0, b: 255 }
-const BLUE_BORDER = 190
+const BLUE_BORDER = 175
 
 let $video;
 let $canvas;
