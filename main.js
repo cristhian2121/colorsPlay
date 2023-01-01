@@ -62,9 +62,9 @@ function processCamera() {
         const distance = distanceOfColor(BLUE, currenPixel)
 
         if(distance < BLUE_BORDER){
-            pixels[pixel] = 0;
-            pixels[pixel+1] = 255;
-            pixels[pixel+2] = 0;
+            // pixels[pixel] = 0;
+            // pixels[pixel+1] = 255;
+            // pixels[pixel+2] = 0;
 
             // to get the average
             const positionX = (pixel / 4) % $canvas.width; // without round because is square
@@ -86,6 +86,7 @@ function processCamera() {
                 }
                 // new Controller
                 if(isNewController) {
+                    // TODO: validate area
                     const newController = new Controller(positionX, positionY);
                     controllers.push(newController)
                 }
@@ -113,8 +114,9 @@ function processCamera() {
 
     canvasContex.putImageData(imageData, 0, 0)
 
-    for (let controller = 0; controller < controllers.length; controller++) {
-        controllers[controller].drawSquare(canvasContex);
+    // console.log('controllers.length: ', controllers.length);
+    for (let i = 0; i < controllers.length; i++) {
+        controllers[i].drawSquare(canvasContex);
     }
 
     // print pixel more blue
