@@ -44,13 +44,6 @@ function processCamera() {
     const imageData = canvasContex.getImageData(0, 0, $canvas.width, $canvas.height)
     const pixels = imageData.data
 
-    let shortDistance = null
-    let bluePixel = null
-
-    // let sumX = 0
-    // let sumY = 0
-    // let count = 0
-
     const controllers = [];
     
     for (let pixel = 0; pixel < pixels.length; pixel+=4) {
@@ -58,16 +51,14 @@ function processCamera() {
             r: pixels[pixel],
             g: pixels[pixel+1],
             b: pixels[pixel+2]
+            // alpha: pixels[pixel+3]
         }
         const distance = distanceOfColor(BLUE, currenPixel)
 
         if(distance < BLUE_BORDER){
-            // pixels[pixel] = 0;
-            // pixels[pixel+1] = 255;
-            // pixels[pixel+2] = 0;
 
-            // to get the average
-            const positionX = (pixel / 4) % $canvas.width; // without round because is square
+            // Getting average
+            const positionX = (pixel / 4) % $canvas.width; // Method to normalize
             const positionY = Math.floor(pixel / 4 / $canvas.width);
 
             // Group
@@ -91,43 +82,16 @@ function processCamera() {
                     controllers.push(newController)
                 }
             }
-
-            // sumX += positionX
-            // sumY += positionY
-
-            // count++
-        }        
-
-        // Shortist distance
-        // if(shortDistance == null || distance < shortDistance) {
-        //     shortDistance = distance
-    
-        //     // The blue more blue
-        //     const positionY = Math.floor(pixel / 4 / $canvas.width);
-        //     const positionX = (pixel / 4) % $canvas.width; // without round because is square
-        //     bluePixel = {
-        //         x: positionX,
-        //         y: positionY
-        //     }
-        // }        
+        }      
     }
 
-    canvasContex.putImageData(imageData, 0, 0)
+    // canvasContex.putImageData(imageData, 0, 0)
 
-    // console.log('controllers.length: ', controllers.length);
     for (let i = 0; i < controllers.length; i++) {
-        controllers[i].drawSquare(canvasContex);
+        controllers[i].drawSquare(canvasContex);       
+        
+        // controllers[i].getRightSectionX();
     }
-
-    // print pixel more blue
-    // if(count){            
-    //     printCicle({ 
-    //         ctx: canvasContex,
-    //         x: sumX / count,
-    //         y: sumY /count
-    //     })
-    // }
-
 
     setTimeout(processCamera, 30)
 
@@ -142,10 +106,15 @@ function distanceOfColor(color, currenPixel){
 
 function printCicle({ ctx, x, y }) {
     
+    
+}
+
+function printLine({ ctx, initialX, initialY, finalX, finalY }) {    
     ctx.fillStyle="#f00" // Red
     ctx.beginPath();
-    ctx.arc(x, y, 10, 0, 2*Math.PI)
-    ctx.fill();
+    ctx.moveTo(initialX, initialY)
+    ctx.lineTo(finalX, finalY)
+    ctx.stroke();
 }
 
 

@@ -1,6 +1,9 @@
 export class Controller {
     pixels = [];
     SHORT_DISTANCE = 50
+    width = 0;
+    height = 0;
+    area = 0;
     constructor(x, y) {
         this.addPixel(x,y)
         this.xMin = x;
@@ -68,25 +71,91 @@ export class Controller {
     drawSquare(ctx) {
         const height = this.yMax - this.yMin;
         const width = this.xMax - this.xMin;
+        //TODO: pass it to a functuion to calculate the 
+        // global with and height
+        this.height = height;
+        this.width = width
         const area = width * height
 
         if(area < 1300) return
 
+        this.#printSquare(ctx, this.xMin, this.yMin, width, height)
+        // this.printRightPortion(ctx, width, this.xMax, this.yMin, height)
+        // this.printLeftPortion(ctx, width, this.xMin, this.yMin, height)
 
-        ctx.strokeStyle = "#f00";
-        ctx.lineWidth = 4;
-        ctx.beginPath();
+        const leftY = this.#getLeftAverageSectionY()
+        const rightY = this.#getRightAverageSectionY()
+        this.printPoint({ ctx, y: leftY })
+        this.printPoint({ ctx, y: rightY, x: this.xMax })
 
-        ctx.rect(this.xMin, this.yMin, width, height)
-        ctx.stroke()
-
-        
     }
 
     area() {
-        const width = this.xMax - this.xMin;
-        const height = this.yMax - this.yMin;
-        return width * height
+        this.area = this.width * this.height;
+        return this.area
+    }
+
+    #getLeftAverageSectionY() {
+        const xMax =  Math.floor(this.xMin + this.width/10);
+        let totalY = 0;
+        let totalPixels = 0;
+        for (let i=0; i < this.pixels.length; i++) {
+            if (this.pixels[i].x <= xMax) {
+                totalY += this.pixels[i].y
+                totalPixels += 1;
+            }
+        }
+        return Math.floor(totalY / totalPixels);
+    }
+
+    #getRightAverageSectionY() {
+        const xMin =  Math.floor(this.xMan - this.width/10);
+
+        let totalY = 0;
+        let totalPixels = 0;
+        for (let i=0; i < this.pixels.length; i++) {
+            if (this.pixels[i].x > xMin && this.pixels[i].x <= this.xMax) {
+                totalY += this.pixels[i].y
+                totalPixels += 1;
+            }
+        }
+        return Math.floor(totalY / totalPixels);
+    }
+
+    printLeftPortion(ctx, width, initX, initY, height) {
+        const endX = initX + (width/10)
+        const newWidth = endX-initX
+        this.#printSquare(ctx, initX, initY, newWidth, height, "#0f0")
+    }
+
+    printRightPortion(ctx, width, endX, initY, height) {
+        const initX = endX - (width/10)
+        const newWidth = endX-initX
+        this.#printSquare(ctx, initX, initY, newWidth, height, "#0f0")
+    }
+
+    printPoint({ ctx, x, y }) {
+        ctx.fillStyle="#f00" // Red
+        ctx.beginPath();
+        ctx.arc(x || this.xMin, y, 10, 0, 2*Math.PI)
+        ctx.fill();
+    }
+
+    /**
+     * Print a square around the object
+     * @param {*} ctx canvas context
+     * @param {Number} xMin 
+     * @param {number} yMin 
+     * @param {*} width 
+     * @param {*} height 
+     */
+    #printSquare(ctx, xMin, yMin, width, height, color="#f00") {
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+
+        ctx.rect(xMin, yMin, width, height)
+        ctx.stroke()
     }
 
 }
