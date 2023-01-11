@@ -8,6 +8,8 @@ const BLUE_BORDER = 175
 
 let $video;
 let $canvas;
+let $degree;
+let $pointer;
 
 window.addEventListener("load", function() {
     // Show camera in html
@@ -17,6 +19,9 @@ window.addEventListener("load", function() {
 function showCamera() {  
     $video = document.getElementById("video"); 
     $canvas = document.getElementById("canvas"); 
+    $degree = document.getElementById("degree"); 
+    $pointer = document.getElementById("pointer");
+
     const options = {
         audio: false,
         video: {
@@ -88,12 +93,13 @@ function processCamera() {
     // canvasContex.putImageData(imageData, 0, 0)
 
     for (let i = 0; i < controllers.length; i++) {
-        controllers[i].drawSquare(canvasContex);       
-        
-        // controllers[i].getRightSectionX();
+        controllers[i].drawSquare(canvasContex);
+        const degrees = controllers[i].getDegree()
+        if(degrees == 0 || !Number(degrees)) continue
+        setDregreesToHtml(degrees)
     }
 
-    setTimeout(processCamera, 30)
+    setTimeout(processCamera, 60)
 
 }
 
@@ -104,17 +110,12 @@ function distanceOfColor(color, currenPixel){
     return Math.sqrt(Math.pow(dr, 2) + Math.pow(dg, 2) + Math.pow(db, 2))
 }
 
-function printCicle({ ctx, x, y }) {
-    
-    
+function setDregreesToHtml(text) {
+    $degree.innerText = text
+
+    if(Number(text)){
+        const degree = text * 100 * 1.1;
+        $pointer.style.transform = `rotate(${degree}deg)`
+    }
+
 }
-
-function printLine({ ctx, initialX, initialY, finalX, finalY }) {    
-    ctx.fillStyle="#f00" // Red
-    ctx.beginPath();
-    ctx.moveTo(initialX, initialY)
-    ctx.lineTo(finalX, finalY)
-    ctx.stroke();
-}
-
-

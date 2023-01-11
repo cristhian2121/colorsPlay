@@ -4,6 +4,8 @@ export class Controller {
     width = 0;
     height = 0;
     area = 0;
+    leftY = 0;
+    rightY = 0;
     constructor(x, y) {
         this.addPixel(x,y)
         this.xMin = x;
@@ -85,9 +87,27 @@ export class Controller {
 
         const leftY = this.#getLeftAverageSectionY()
         const rightY = this.#getRightAverageSectionY()
-        this.printPoint({ ctx, y: leftY })
+        this.printPoint({ ctx, y: leftY, x: this.xMin })
         this.printPoint({ ctx, y: rightY, x: this.xMax })
+        this.#printLine({
+            ctx,
+            initX: this.xMin,
+            finalX: this.xMax,
+            initY: leftY,
+            finalY: rightY
+        })
+        this.leftY = leftY
+        this.rightY = rightY
 
+    }
+
+    /**
+     * Get the degree between the object corners
+     * @returns 
+     */
+    getDegree() {
+        const hipo = (this.leftY-this.rightY)/this.width
+        return Math.tanh(hipo)
     }
 
     area() {
@@ -109,7 +129,7 @@ export class Controller {
     }
 
     #getRightAverageSectionY() {
-        const xMin =  Math.floor(this.xMan - this.width/10);
+        const xMin =  Math.floor(this.xMax - (this.width/10));
 
         let totalY = 0;
         let totalPixels = 0;
@@ -156,6 +176,14 @@ export class Controller {
 
         ctx.rect(xMin, yMin, width, height)
         ctx.stroke()
+    }
+
+    #printLine({ ctx, initX, finalX, initY, finalY, color="#f00" }) {
+        ctx.fillStyle=color
+        ctx.beginPath()
+        ctx.moveTo(initX, initY)
+        ctx.lineTo(finalX, finalY)
+        ctx.stroke();
     }
 
 }
