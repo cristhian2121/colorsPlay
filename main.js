@@ -5,6 +5,7 @@ const VIDEO_WIDTH = 500;
 const VIDEO_HEIGTH = 500;
 const BLUE = { r: 0, g: 0, b: 255 }
 const BLUE_BORDER = 175
+const GAIN = 1.05;
 
 let $video;
 let $canvas;
@@ -111,10 +112,10 @@ function distanceOfColor(color, currenPixel){
 }
 
 function setDregreesToHtml(text) {
-    $degree.innerText = text
-
+    
     if(Number(text)){
-        const degree = text * 100 * 1.1;
+        const degree = text * 100 * GAIN;
+        $degree.innerText = degree
         $pointer.style.transform = `rotate(${degree}deg)`
     }
 
